@@ -15,7 +15,7 @@ class TestAPITest:
             "resultCount": RESULT_COUNT
         }
         response = requests.post(
-            f'{API_BASE_URL_2}search/results',
+            f'{API_BASE_URL_V2}search/results',
             json=body,
             headers=auth
         )
@@ -30,7 +30,7 @@ class TestAPITest:
             "id": BOOK_ID_AVAILABLE
         }
         response = requests.post(
-            f'{API_BASE_URL_1}cart/product',
+            f'{API_BASE_URL_V1}cart/product',
             json=body,
             headers=auth
         )
@@ -43,7 +43,7 @@ class TestAPITest:
             "id": BOOK_ID_UNAVAILABLE
         }
         response = requests.post(
-            f'{API_BASE_URL_1}cart/product',
+            f'{API_BASE_URL_V1}cart/product',
             json=body,
             headers=auth
         )
@@ -57,19 +57,29 @@ class TestAPITest:
             "id": BOOK_ID_AVAILABLE
         }
         response = requests.put(
-            f'{API_BASE_URL_1}cart/product',
+            f'{API_BASE_URL_V1}cart/product',
             json=body,
             headers=auth
         )
         assert response.status_code == 405
 
     @pytest.mark.api
-    @allure.story('Очистить "Корзину"')
-    def test_delete_cart(self, auth):
-        response = requests.delete(
-            f'{API_BASE_URL_2}cart/product/211431436'
+    @allure.story('Добавление и удаление книги из "Корзины"')
+    def test_add_and_remove_book_from_cart(self, auth):
+        body = {
+            "id": BOOK_ID_AVAILABLE
+        }
+        add_response = requests.post(
+            f'{API_BASE_URL_V1}cart/product',
+            json=body,
+            headers=auth
         )
-        if response.status_code == 204:
+        assert add_response.status_code == 200, "Ошибка добавления книги в корзину"
+        delete_response = requests.delete(
+            f'{API_BASE_URL_V1}cart/product/2142706',
+            headers=auth
+        )
+        if delete_response.status_code == 204:
             print("Корзина очищена успешно!")
-        elif response.status_code == 404:
+        elif delete_response.status_code == 404:
             print("Товар в корзине не найден.")

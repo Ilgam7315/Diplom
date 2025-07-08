@@ -27,7 +27,7 @@ class TestChitaiGorodUITests:
         allure.attach(browser.get_screenshot_as_png(), name='Screenshot', attachment_type=AttachmentType.PNG)
 
     @allure.story('Проверка работоспособности формы поиска')
-    @allure.title('Форма поиска функционирует корректно')
+    @allure.title('Поиск книги по названию возвращает корректные результаты')
     def test_search_field(self, browser):
         with allure.step('Открываем главную страницу'):
             browser.get(BASE_URL)
@@ -101,3 +101,5 @@ class TestChitaiGorodUITests:
         with allure.step('Ждем исчезновение всплывающего окна'):
             wait.until(EC.invisibility_of_element_located(
                 (By.XPATH, "//h5[contains(text(), 'Ваш город')]//ancestor::div[@class='header-location-popup']")))
+        assert not browser.find_elements(By.XPATH, "//h5[contains(text(), 'Ваш город')]//ancestor::div[@class='header-location-popup']"), \
+            'Всплывающее окно не было скрыто после нажатия кнопки закрытия.'
